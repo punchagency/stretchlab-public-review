@@ -22,6 +22,18 @@ export const PublicReview = () => {
     const [rating, setRating] = useState<number | null>(null);
     const [submitted, setSubmitted] = useState(false);
 
+    const platformLinks = (() => {
+        if (!landingPageData?.links) return [];
+        try {
+            return typeof landingPageData.links === 'string'
+                ? JSON.parse(landingPageData.links)
+                : landingPageData.links;
+        } catch (e) {
+            console.error("Failed to parse links:", e);
+            return [];
+        }
+    })();
+
     const employee = {
         name: landingPageData?.data?.employee_name || "Employee",
         location: landingPageData?.data?.location_name || "",
@@ -52,9 +64,6 @@ export const PublicReview = () => {
         });
     };
 
-    const handleGoogleReview = () => {
-        window.open("https://search.google.com", "_blank");
-    };
 
     if (submitted) {
         return (
@@ -138,15 +147,19 @@ export const PublicReview = () => {
                         >
                             {isSubmitting ? <Spinner /> : "Submit Feedback"}
                         </Button>
-                        <button
-                            className="w-full py-5 bg-white border-2 border-primary-secondary/30 text-primary-base rounded-xl font-black uppercase tracking-[0.15em] text-xs flex items-center justify-center gap-4 hover:bg-primary-light/50 transition-all active:scale-95 group/google"
-                            onClick={handleGoogleReview}
-                        >
-                            Take me to Google
-                            <div className="p-1.5 bg-white rounded-lg shadow-sm group-hover/google:shadow-md transition-all group-hover/google:scale-110">
-                                <SvgIcon name="google" width={18} height={18} />
-                            </div>
-                        </button>
+
+                        {platformLinks.map((link: { platform: string; link_url: string }, index: number) => (
+                            <button
+                                key={index}
+                                className="w-full py-5 bg-white border-2 border-primary-secondary/30 text-primary-base rounded-xl font-black uppercase tracking-[0.15em] text-xs flex items-center justify-center gap-4 hover:bg-primary-light/50 transition-all active:scale-95 group/platform"
+                                onClick={() => window.open(link.link_url, "_blank")}
+                            >
+                                {link.platform}
+                                <div className="p-1.5 bg-white rounded-lg shadow-sm group-hover/platform:shadow-md transition-all group-hover/platform:scale-110">
+                                    <SvgIcon name={link.platform.toLowerCase() as any} width={18} height={18} />
+                                </div>
+                            </button>
+                        ))}
                     </div>
                 </div>
 

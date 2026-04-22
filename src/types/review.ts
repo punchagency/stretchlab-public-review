@@ -59,6 +59,7 @@ export interface LandingPageData {
 
 export interface LandingPageResponse {
     data: LandingPageData;
+    links?: string | { platform: string; link_url: string }[];
     message: string;
     status: string;
 }
