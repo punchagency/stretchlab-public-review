@@ -70,23 +70,23 @@ export const PublicReview = () => {
         return (
             <div className="min-h-screen bg-white flex flex-col items-center justify-center p-6 text-center animate-in fade-in duration-500">
                 <div className="max-w-md w-full">
-                    <div className="w-24 h-24 bg-emerald-50 rounded-full flex items-center justify-center mx-auto mb-8 text-emerald-500 animate-in zoom-in duration-700 delay-200">
-                        <CheckCircle2 size={48} />
+                    <div className="w-24 h-24 bg-emerald-50 rounded-full flex items-center justify-center mx-auto mb-5 text-emerald-500 animate-in zoom-in duration-700 delay-200">
+                        <CheckCircle2 size={45} />
                     </div>
-                    <h1 className="text-4xl font-black text-gray-900 mb-4 tracking-tight">Thank You!</h1>
-                    <p className="text-gray-500 font-medium leading-relaxed text-lg">
+                    <h1 className=" text-xl md:text-3xl font-black text-gray-900 mb-3 ">Thank You!</h1>
+                    <p className="text-gray-500 font-medium  text-base md:text-lg">
                         Your feedback has been received.
                     </p>
 
                     {platformLinks.length > 0 && (
                         <div className="mt-10 space-y-4 animate-in slide-in-from-bottom-4 duration-700 delay-300">
-                            <p className="text-sm font-bold text-gray-400 uppercase tracking-widest">
+                            <p className="text-sm font-bold text-gray-400 uppercase">
                                 Leave us a review
                             </p>
                             {platformLinks.map((link: { platform: string; link_url: string }, index: number) => (
                                 <button
                                     key={index}
-                                    className="w-full py-5 bg-white border-2 border-primary-secondary/60 text-primary-base rounded-xl font-black uppercase tracking-[0.15em] text-xs flex items-center justify-center gap-4 hover:bg-primary-light/50 transition-all active:scale-95 group/platform"
+                                    className="w-full py-4 md:py-5 bg-white border-2 border-primary-secondary/60 text-primary-base rounded-xl font-black uppercase tracking-[0.15em] text-xs flex items-center justify-center gap-4 hover:bg-primary-light/50 transition-all active:scale-95 group/platform"
                                     onClick={() => window.open(link.link_url, "_blank")}
                                 >
                                     {link.platform}
@@ -103,12 +103,7 @@ export const PublicReview = () => {
     }
 
     return (
-        <div className="min-h-screen bg-gray-50 flex flex-col items-center py-16 px-6 relative overflow-hidden">
-
-            <div className="absolute top-0 left-0 w-full h-full -z-10 overflow-hidden pointer-events-none">
-                <div className="absolute top-[-10%] right-[-10%] w-[500px] h-[500px] bg-primary-light/40 rounded-full blur-[100px]" />
-                <div className="absolute bottom-[-10%] left-[-10%] w-[400px] h-[400px] bg-primary-secondary/30 rounded-full blur-[100px]" />
-            </div>
+        <div className="min-h-screen bg-gray-50 flex flex-col items-center py-14 px-6 relative overflow-hidden">
 
             <div className="max-w-xl w-full">
                 <div className="text-center space-y-3 mb-10">
@@ -117,17 +112,17 @@ export const PublicReview = () => {
                             Hi {employee.customer_name}
                         </h2>
                     )}
-                    <h1 className="text-4xl font-black text-gray-900 tracking-tight text-balance">We value your feedback!</h1>
-                    <p className="text-gray-500 font-medium text-lg leading-relaxed">
+                    <h1 className="text-2xl md:text-4xl font-black text-gray-900 tracking-tight text-balance">We value your feedback!</h1>
+                    <p className="text-gray-500 font-medium text-base md:text-lg leading-relaxed">
                         {landingPageData?.data?.landing_page_message || (
                             <>Please rate your recent experience with our team member <span className="text-gray-900 font-bold">{employee.name}</span>.</>
                         )}
                     </p>
                 </div>
 
-                <div className="bg-white p-10 md:p-14 rounded-[3.5rem] shadow-2xl shadow-gray-200/50 border border-white/50 space-y-12 animate-in slide-in-from-bottom-8 duration-700">
+                <div className="bg-white pb-8 md:pb-10 p-4 md:p-10 rounded-2xl shadow-2xl shadow-gray-200/50 border border-white/50 space-y-12 animate-in slide-in-from-bottom-8 duration-700">
 
-                    <div className="flex justify-between items-center px-2">
+                    <div className="flex justify-between items-center">
                         {RATINGS.map((r) => (
                             <button
                                 key={r.value}
@@ -135,7 +130,7 @@ export const PublicReview = () => {
                                 className={`flex flex-col items-center gap-4 transition-all duration-500 group ${rating === r.value ? "scale-125 z-10" : "hover:scale-110 opacity-70 hover:opacity-100"
                                     }`}
                             >
-                                <span className={`text-5xl md:text-6xl transition-all duration-500 ${rating === r.value ? "drop-shadow-xl" : "grayscale-[30%] group-hover:grayscale-0"}`}>
+                                <span className={`text-4xl md:text-5xl transition-all duration-500 ${rating === r.value ? "drop-shadow-xl" : "grayscale-[30%] group-hover:grayscale-0"}`}>
                                     {r.emoji}
                                 </span>
                                 <span className={`text-[10px] font-black uppercase tracking-[0.2em] transition-all duration-300 ${rating === r.value ? r.color : "text-gray-300 group-hover:text-gray-500"
@@ -147,12 +142,12 @@ export const PublicReview = () => {
                     </div>
 
 
-                    <div className="bg-white border-2 border-gray-50 rounded-[2.5rem] p-8 flex items-center gap-6 shadow-sm hover:border-primary-secondary transition-colors duration-500 group/card">
-                        <div className="w-20 h-20 rounded-full bg-primary-secondary/50 flex items-center justify-center text-primary-base font-black text-3xl shadow-inner border-4 border-white transition-transform duration-500 group-hover/card:scale-105">
+                    <div className="bg-white border-2 border-gray-50 rounded-2xl p-4 md:p-8 flex items-center gap-4 md:gap-6 shadow-sm hover:border-primary-secondary transition-colors duration-500 group/card">
+                        <div className="w-16 h-16 md:w-20 md:h-20 rounded-full bg-primary-secondary/50 flex items-center justify-center text-primary-base font-black text-xl md:text-3xl shadow-inner border-4 border-white transition-transform duration-500 group-hover/card:scale-105">
                             {employee.avatar}
                         </div>
-                        <div className="space-y-1.5 flex-1">
-                            <h3 className="text-2xl font-black text-gray-900 tracking-tight">{employee.name}</h3>
+                        <div className=" space-y-1 md:space-y-1.5 flex-1">
+                            <h3 className="text-xl md:text-2xl font-black text-gray-900 tracking-tight">{employee.name}</h3>
                             {employee.location && (
                                 <p className="text-sm font-bold text-gray-400 uppercase tracking-widest">{employee.location}</p>
                             )}

@@ -73,11 +73,11 @@ export const NegativeExperience = () => {
         return (
             <div className="min-h-screen bg-white flex flex-col items-center justify-center p-6 text-center animate-in fade-in duration-500">
                 <div className="max-w-md w-full">
-                    <div className="w-24 h-24 bg-emerald-50 rounded-full flex items-center justify-center mx-auto mb-8 text-emerald-500">
-                        <CheckCircle2 size={48} />
+                    <div className="w-24 h-24 bg-emerald-50 rounded-full flex items-center justify-center mx-auto mb-5 text-emerald-500">
+                        <CheckCircle2 size={45} />
                     </div>
-                    <h1 className="text-4xl font-black text-gray-900 mb-4 tracking-tight">Thank You!</h1>
-                    <p className="text-gray-500 font-medium leading-relaxed text-lg">
+                    <h1 className="text-xl md:text-3xl font-black text-gray-900 mb-3">Thank You!</h1>
+                    <p className="text-gray-500 font-medium text-sm md:text-lg">
                         We're sorry you had a poor experience. Your feedback has been received and
                         our management team will review it shortly.
                     </p>
@@ -95,19 +95,19 @@ export const NegativeExperience = () => {
     }
 
     return (
-        <div className="min-h-screen bg-gray-50 flex flex-col items-center py-16 px-6 relative overflow-hidden">
+        <div className="min-h-screen bg-gray-50 flex flex-col items-center py-14 px-6 relative overflow-hidden">
 
 
             <div className="max-w-xl mx-auto w-full flex flex-col min-h-[calc(100vh-8rem)]">
                 <div className="flex-1 space-y-7">
-                    <div className="text-center space-y-3">
+                    <div className="text-center space-y-2">
                         {customerName && (
-                            <h2 className="text-xl font-bold text-gray-400 capitalize tracking-widest mb-1">
+                            <h2 className=" text-base md:text-xl font-bold text-gray-400 capitalize tracking-widest mb-1">
                                 Hi {customerName}
                             </h2>
                         )}
-                        <h1 className="text-[32px] font-black text-[#1F2937] tracking-tight">We value your feedback!</h1>
-                        <p className="text-gray-500 font-medium text-lg leading-relaxed">
+                        <h1 className="text-2xl md:text-4xl font-black text-[#1F2937] ">We value your feedback!</h1>
+                        <p className="text-gray-500 font-medium text-base md:text-lg ">
                             Please let us know about your recent experience
                             {flexologistName ? (
                                 <> with <span className="font-bold capitalize">{flexologistName}</span></>
@@ -141,7 +141,7 @@ export const NegativeExperience = () => {
                     </div> */}
 
                     <div className="text-center">
-                        <h2 className="text-lg font-bold text-gray-800 tracking-tight">Select one or more issues</h2>
+                        <h2 className=" text-base md:text-lg font-bold text-gray-800">Select one or more issues</h2>
                     </div>
                     <div className="flex flex-wrap justify-center gap-3">
                         {followUpOptions.map((issue: string) => {
