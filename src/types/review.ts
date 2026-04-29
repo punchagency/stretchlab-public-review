@@ -64,6 +64,20 @@ export interface LandingPageResponse {
     status: string;
 }
 
+export interface NegativePageData {
+    booking_id: string;
+    customer_name: string;
+    flexologist_name: string;
+    location: string;
+    negative_follow_up_options: string;
+}
+
+export interface NegativePageResponse {
+    data: NegativePageData;
+    message: string;
+    status: string;
+}
+
 export interface Review {
     admin_id: number;
     booking_id: number;

@@ -5,7 +5,8 @@ import { renderSuccessToast, renderErrorToast } from "@/components/utils";
 import { CheckCircle2 } from "lucide-react";
 import { useLocationLandingPage, useSubmitReview } from "@/hooks/useReview";
 import { FullLoader } from "@/components/shared/FullLoader";
-import { SvgIcon } from "@/components/shared/SvgIcon";
+// import { SvgIcon } from "@/components/shared/SvgIcon";
+
 
 const RATINGS = [
     { label: "Terrible", emoji: "😫", value: 1, color: "text-red-500" },
@@ -76,6 +77,26 @@ export const PublicReview = () => {
                     <p className="text-gray-500 font-medium leading-relaxed text-lg">
                         Your feedback has been received.
                     </p>
+
+                    {platformLinks.length > 0 && (
+                        <div className="mt-10 space-y-4 animate-in slide-in-from-bottom-4 duration-700 delay-300">
+                            <p className="text-sm font-bold text-gray-400 uppercase tracking-widest">
+                                Leave us a review
+                            </p>
+                            {platformLinks.map((link: { platform: string; link_url: string }, index: number) => (
+                                <button
+                                    key={index}
+                                    className="w-full py-5 bg-white border-2 border-primary-secondary/60 text-primary-base rounded-xl font-black uppercase tracking-[0.15em] text-xs flex items-center justify-center gap-4 hover:bg-primary-light/50 transition-all active:scale-95 group/platform"
+                                    onClick={() => window.open(link.link_url, "_blank")}
+                                >
+                                    {link.platform}
+                                    {/* <div className="p-1.5 bg-white rounded-lg shadow-sm group-hover/platform:shadow-md transition-all group-hover/platform:scale-110">
+                                        <SvgIcon name={link.platform.toLowerCase() as any} width={18} height={18} />
+                                    </div> */}
+                                </button>
+                            ))}
+                        </div>
+                    )}
                 </div>
             </div>
         );
@@ -140,26 +161,13 @@ export const PublicReview = () => {
 
                     <div className="space-y-5 pt-4">
                         <Button
-                            className={`w-full py-6 rounded-lg flex items-center justify-center gap-2 font-black uppercase tracking-[0.2em] text-sm transition-all duration-700 ${rating ? "bg-primary-base text-white shadow-2xl shadow-primary-base/40 hover:scale-[1.02] active:scale-95" : "bg-gray-100 text-gray-300 cursor-not-allowed"
+                            className={`w-full py-6 rounded-lg flex items-center justify-center gap-2 font-black uppercase tracking-[0.2em] text-sm transition-all duration-700 ${rating ? "bg-primary-base text-white shadow-2xl shadow-primary-base/40 hover:scale-[1.02] active:scale-95" : "bg-gray-400 text-gray-500 cursor-not-allowed"
                                 }`}
                             disabled={!rating || isSubmitting}
                             onClick={handleSubmit}
                         >
                             {isSubmitting ? <Spinner /> : "Submit Feedback"}
                         </Button>
-
-                        {platformLinks.map((link: { platform: string; link_url: string }, index: number) => (
-                            <button
-                                key={index}
-                                className="w-full py-5 bg-white border-2 border-primary-secondary/30 text-primary-base rounded-xl font-black uppercase tracking-[0.15em] text-xs flex items-center justify-center gap-4 hover:bg-primary-light/50 transition-all active:scale-95 group/platform"
-                                onClick={() => window.open(link.link_url, "_blank")}
-                            >
-                                {link.platform}
-                                <div className="p-1.5 bg-white rounded-lg shadow-sm group-hover/platform:shadow-md transition-all group-hover/platform:scale-110">
-                                    <SvgIcon name={link.platform.toLowerCase() as any} width={18} height={18} />
-                                </div>
-                            </button>
-                        ))}
                     </div>
                 </div>
 
