@@ -23,15 +23,15 @@ export const PublicReview = () => {
     const [rating, setRating] = useState<number | null>(null);
     const [submitted, setSubmitted] = useState(false);
 
-    const platformLinks = (() => {
-        if (!landingPageData?.links) return [];
+    const platformLink = (() => {
+        if (!landingPageData?.links) return null;
         try {
             return typeof landingPageData.links === 'string'
                 ? JSON.parse(landingPageData.links)
                 : landingPageData.links;
         } catch (e) {
             console.error("Failed to parse links:", e);
-            return [];
+            return null;
         }
     })();
 
@@ -78,23 +78,20 @@ export const PublicReview = () => {
                         Your feedback has been received.
                     </p>
 
-                    {platformLinks.length > 0 && (
+                    {platformLink && (
                         <div className="mt-10 space-y-4 animate-in slide-in-from-bottom-4 duration-700 delay-300">
-                            <p className="text-sm font-bold text-gray-400 uppercase">
-                                Leave us a review
+                            <p className="text-sm font-bold text-gray-400 ">
+                                {platformLink.message || "Leave us a review"}
                             </p>
-                            {platformLinks.map((link: { platform: string; link_url: string }, index: number) => (
-                                <button
-                                    key={index}
-                                    className="w-full py-4 md:py-5 bg-white border-2 border-primary-secondary/60 text-primary-base rounded-xl font-black uppercase tracking-[0.15em] text-xs flex items-center justify-center gap-4 hover:bg-primary-light/50 transition-all active:scale-95 group/platform"
-                                    onClick={() => window.open(link.link_url, "_blank")}
-                                >
-                                    {link.platform}
-                                    {/* <div className="p-1.5 bg-white rounded-lg shadow-sm group-hover/platform:shadow-md transition-all group-hover/platform:scale-110">
-                                        <SvgIcon name={link.platform.toLowerCase() as any} width={18} height={18} />
-                                    </div> */}
-                                </button>
-                            ))}
+                            <button
+                                className="w-full py-4 md:py-5 bg-white border-2 border-primary-secondary/60 text-primary-base rounded-xl font-black uppercase tracking-[0.15em] text-xs flex items-center justify-center gap-4 hover:bg-primary-light/50 transition-all active:scale-95 group/platform"
+                                onClick={() => window.open(platformLink.link_url, "_blank")}
+                            >
+                                {platformLink.platform}
+                                {/* <div className="p-1.5 bg-white rounded-lg shadow-sm group-hover/platform:shadow-md transition-all group-hover/platform:scale-110">
+                                    <SvgIcon name={platformLink.platform.toLowerCase() as any} width={18} height={18} />
+                                </div> */}
+                            </button>
                         </div>
                     )}
                 </div>
