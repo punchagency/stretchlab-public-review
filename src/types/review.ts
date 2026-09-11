@@ -1,7 +1,7 @@
 export interface ReviewLocation {
     admin_id: number;
     id: number;
-    links: any;
+    links: unknown;
     location_id: string;
     location_name: string;
     normalized_location_name: string;
@@ -48,18 +48,28 @@ export interface ReviewSettings extends ReviewBrandInfo {
     negative_follow_up_content: string;
 }
 
+export interface ReviewLink {
+    link_url: string;
+    message?: string;
+    platform: string;
+    position?: number;
+}
+
 export interface LandingPageData {
     booking_id: number;
     customer_name: string;
     employee_name: string;
-    flexologist_id: number;
+    flexologist_id?: number;
     landing_page_message: string;
     location_name: string;
+    negative_review_threshold?: number;
+    negative_follow_up_options?: string[] | string;
+    negative_follow_up_message?: string;
 }
 
 export interface LandingPageResponse {
     data: LandingPageData;
-    links?: string | { platform: string; link_url: string }[];
+    links?: string | ReviewLink | ReviewLink[];
     message: string;
     status: string;
 }

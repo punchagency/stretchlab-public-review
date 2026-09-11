@@ -12,6 +12,6 @@ export const submitReview = async (data: { booking_token: string; feedback: numb
     return api.post("/admin/review/submit-review", data);
 };
 
-export const submitNegativeReview = async (data: { booking_token: string; feedback: string[]; reason: string }) => {
+export const submitNegativeReview = async (data: { booking_token: string; feedback: string[]; reason: string; rating?: number }) => {
     return api.post("/admin/review/submit-negative-review", data);
 };

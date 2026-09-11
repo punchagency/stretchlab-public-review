@@ -59,8 +59,9 @@ export const NegativeExperience = () => {
                 setSubmitted(true);
                 renderSuccessToast("Thank you for your feedback!");
             },
-            onError: (error: any) => {
-                renderErrorToast(error.response?.data?.error || "Failed to submit feedback. Please try again.");
+            onError: (error: unknown) => {
+                const err = error as { response?: { data?: { error?: string } } };
+                renderErrorToast(err.response?.data?.error || "Failed to submit feedback. Please try again.");
             }
         });
     };

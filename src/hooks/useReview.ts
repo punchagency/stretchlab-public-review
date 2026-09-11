@@ -35,7 +35,7 @@ export const useSubmitReview = () => {
 
 export const useSubmitNegativeReview = () => {
     return useMutation({
-        mutationFn: (data: { booking_token: string; feedback: string[]; reason: string }) =>
+        mutationFn: (data: { booking_token: string; feedback: string[]; reason: string; rating?: number }) =>
             submitNegativeReview(data),
     });
 };
