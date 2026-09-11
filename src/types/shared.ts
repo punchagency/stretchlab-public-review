@@ -30,4 +30,6 @@ export type SvgIconName =
   | "support"
   | "star"
   | "google"
+  | "facebook"
+  | "yelp"
   | "bridge";
