@@ -165,9 +165,7 @@ export const PublicReview = () => {
                             <div className="p-4 sm:p-5 rounded-2xl bg-primary-light border-2 border-primary-secondary/70 text-left space-y-2.5 sm:space-y-3 shadow-xs">
                                 <div className="flex items-start justify-between gap-2.5">
                                     <div>
-                                        <p className="text-[10px] sm:text-xs font-black uppercase tracking-widest text-primary-base">
-                                            {hasOpenedLink ? "Thank you for reviewing!" : "Share the love"}
-                                        </p>
+
                                         <p className="text-xs sm:text-sm font-semibold text-gray-800 mt-0.5 sm:mt-1">
                                             {primaryPlatformMeta.key === "yelp"
                                                 ? `Find us on Yelp and mention ${flexologistName || "your Flexologist"}.`
