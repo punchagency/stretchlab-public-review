@@ -158,9 +158,9 @@ export const PublicReview = () => {
                         {/* 
                           Display review card at the bottom:
                           - Always visible for negative raters (since modal is suppressed)
-                          - For positive raters: only shown if they dismissed the modal or already interacted with it
+                          - For positive raters: only shown if they dismissed the modal without opening the link
                         */}
-                        {platformLinks.length > 0 && (isNegative || promptStatus === "dismissed" || hasOpenedLink) && (
+                        {platformLinks.length > 0 && (isNegative || (promptStatus === "dismissed" && !hasOpenedLink)) && (
                             <div className="mt-6 sm:mt-8 space-y-4 animate-in slide-in-from-bottom-4 duration-700 delay-300">
                                 <div className="p-4 sm:p-5 rounded-2xl bg-primary-light border-2 border-primary-secondary/70 text-left space-y-2.5 sm:space-y-3 shadow-xs">
                                     <div className="flex items-start justify-between gap-2.5">
