@@ -3,7 +3,7 @@ type Props = {
   className?: string;
 };
 
-type ButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> & Props;
+type ButtonProps = React.ComponentProps<"button"> & Props;
 
 export const Button = ({ children, className, ...rest }: ButtonProps) => {
   const buttonClasses = `rounded-lg cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed hover:bg-opacity-60 transition-all duration-20 text-base tracking-custom2 font-medium px-6 ${className}`;
