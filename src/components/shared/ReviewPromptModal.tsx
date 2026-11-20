@@ -1,11 +1,19 @@
 import { useEffect, useId, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
-import { Check, Copy, ExternalLink, PenLine, Star, X } from "lucide-react";
+import { Check, Copy, ExternalLink, PenLine, RefreshCw, Star, X } from "lucide-react";
 import { Button } from "./Button";
 import { PlatformIcon } from "./PlatformIcon";
 import { copyTextToClipboard } from "@/components/utils/reviewPlatform";
 import type { ReviewPlatformMeta } from "@/components/utils/reviewPlatform";
+import {
+    formatEmployeeName,
+    getHighlightChips,
+    getSuggestedReviewNote,
+} from "@/components/utils/reviewSuggestions";
+import type { HighlightId } from "@/components/utils/reviewSuggestions";
+
+const MAX_HIGHLIGHTS = 3;
 
 const NOTE_MAX_LENGTH = 280;
 const FOCUSABLE_SELECTOR =
@@ -18,19 +26,12 @@ type Props = {
     /** Flexologist / team member name. Pass null when unknown so we don't ask clients to mention "Employee". */
     employeeName: string | null;
     locationName?: string;
+    /** Optional unique booking/visit token used to vary the initial suggested review per user. */
+    seed?: string;
     /** Optional admin-configured message for the link. */
     message?: string;
     hasOpenedLink: boolean;
     onOpenReview: (note: string) => void;
-};
-
-const buildDefaultNote = (employeeName: string | null, locationName?: string) => {
-    if (!employeeName) {
-        return locationName ? `Had a great session at ${locationName}! ` : "Had a great session! ";
-    }
-    return locationName
-        ? `Had a great session with ${employeeName} at ${locationName}! `
-        : `Had a great session with ${employeeName}! `;
 };
 
 export const ReviewPromptModal = ({
@@ -39,6 +40,7 @@ export const ReviewPromptModal = ({
     platform,
     employeeName,
     locationName,
+    seed,
     message,
     hasOpenedLink,
     onOpenReview,
@@ -53,7 +55,14 @@ export const ReviewPromptModal = ({
     const onCloseRef = useRef(onClose);
     const copiedTimerRef = useRef<number | undefined>(undefined);
 
-    const [note, setNote] = useState(() => buildDefaultNote(employeeName, locationName));
+    const displayEmployeeName = formatEmployeeName(employeeName);
+    const highlightChips = getHighlightChips(locationName);
+
+    const [variant, setVariant] = useState(0);
+    const [selectedHighlights, setSelectedHighlights] = useState<HighlightId[]>([]);
+    const [note, setNote] = useState(
+        () => getSuggestedReviewNote({ employeeName: displayEmployeeName, locationName, seed, variant: 0 }).text
+    );
     const [noteCopied, setNoteCopied] = useState(false);
 
     const isGoogle = platform.key === "google";
@@ -119,15 +128,52 @@ export const ReviewPromptModal = ({
         copiedTimerRef.current = window.setTimeout(() => setNoteCopied(false), 2000);
     };
 
-    const headline = employeeName
-        ? `So glad you enjoyed your session with ${employeeName}!`
+    const handleShuffleNote = () => {
+        const nextVariant = variant + 1;
+        const next = getSuggestedReviewNote({
+            employeeName: displayEmployeeName,
+            locationName,
+            seed,
+            variant: nextVariant,
+            highlights: selectedHighlights,
+        });
+        setVariant(nextVariant);
+        setNote(next.text);
+        setNoteCopied(false);
+    };
+
+    const handleToggleHighlight = (id: HighlightId) => {
+        const isSelected = selectedHighlights.includes(id);
+        let nextHighlights: HighlightId[];
+        if (isSelected) {
+            nextHighlights = selectedHighlights.filter((item) => item !== id);
+        } else if (selectedHighlights.length >= MAX_HIGHLIGHTS) {
+            nextHighlights = [...selectedHighlights.slice(1), id];
+        } else {
+            nextHighlights = [...selectedHighlights, id];
+        }
+
+        const next = getSuggestedReviewNote({
+            employeeName: displayEmployeeName,
+            locationName,
+            seed,
+            variant,
+            highlights: nextHighlights,
+        });
+        setSelectedHighlights(nextHighlights);
+        setNote(next.text);
+        setNoteCopied(false);
+    };
+
+    const headline = displayEmployeeName
+        ? `So glad you enjoyed your session with ${displayEmployeeName}!`
         : "So glad you enjoyed your session!";
 
     const supportingCopy =
         message?.trim() ||
         (isYelp
-            ? `Find us on Yelp and share your experience.${employeeName ? ` Mentioning ${employeeName} by name helps them get recognized.` : ""}`
-            : `Would you take 30 seconds to share it on ${platform.label}?${employeeName ? ` Mentioning ${employeeName} by name helps them get recognized.` : ""}`);
+            ? `Find us on Yelp and share your experience.${displayEmployeeName ? ` Mentioning ${displayEmployeeName} by name helps them get recognized.` : ""}`
+            : `Would you take 30 seconds to share it on ${platform.label}?${displayEmployeeName ? ` Mentioning ${displayEmployeeName} by name helps them get recognized.` : ""}`);
 
     const steps = [
         {
@@ -136,7 +182,7 @@ export const ReviewPromptModal = ({
         },
         {
             icon: PenLine,
-            text: employeeName ? `Paste your note & mention ${employeeName}` : "Paste your note & share your experience",
+            text: displayEmployeeName ? `Paste your note & mention ${displayEmployeeName}` : "Paste your note & share your experience",
         },
     ];
 
@@ -198,7 +244,7 @@ export const ReviewPromptModal = ({
                                 </h2>
                                 <p id={descriptionId} className="mt-1.5 sm:mt-2 text-xs sm:text-sm md:text-base font-medium text-gray-500 leading-relaxed">
                                     Finish your review in the {platform.label} tab.
-                                    {employeeName ? ` Don't forget to mention ${employeeName}.` : ""}
+                                    {displayEmployeeName ? ` Don't forget to mention ${displayEmployeeName}.` : ""}
                                 </p>
 
                                 <div className="mt-5 sm:mt-7 space-y-2.5 sm:space-y-3">
@@ -226,8 +272,8 @@ export const ReviewPromptModal = ({
                                 <div className="flex flex-col items-center text-center pt-1 sm:pt-2">
                                     <div className="relative mb-3 sm:mb-4">
                                         <div className="flex h-13 w-13 sm:h-16 sm:w-16 items-center justify-center rounded-full bg-primary-secondary/60 border-2 sm:border-4 border-white shadow-inner text-primary-base font-black text-lg sm:text-2xl">
-                                            {employeeName ? employeeName.charAt(0).toUpperCase() : <Star size={20} className="fill-primary-base sm:hidden" />}
-                                            {employeeName ? null : <Star size={26} className="fill-primary-base hidden sm:block" />}
+                                            {displayEmployeeName ? displayEmployeeName.charAt(0).toUpperCase() : <Star size={20} className="fill-primary-base sm:hidden" />}
+                                            {displayEmployeeName ? null : <Star size={26} className="fill-primary-base hidden sm:block" />}
                                         </div>
                                         <PlatformIcon meta={platform} size={12} className="absolute -bottom-1 -right-1 rounded-full! ring-2 ring-white sm:hidden" />
                                         <PlatformIcon meta={platform} size={14} className="absolute -bottom-1 -right-1 rounded-full! ring-2 ring-white hidden sm:inline-flex" />
@@ -268,28 +314,64 @@ export const ReviewPromptModal = ({
                                     ))}
                                 </ol>
 
+                                {/* Quick-tap highlight chips */}
+                                <div className="mt-4 sm:mt-5 space-y-1.5 sm:space-y-2 text-left">
+                                    <p className="text-[10px] sm:text-xs font-bold uppercase tracking-wider sm:tracking-widest text-grey-2">
+                                        What stood out? <span className="normal-case tracking-normal font-medium">(tap to personalize)</span>
+                                    </p>
+                                    <div className="flex flex-wrap gap-1.5">
+                                        {highlightChips.map((chip) => {
+                                            const active = selectedHighlights.includes(chip.id);
+                                            return (
+                                                <button
+                                                    key={chip.id}
+                                                    type="button"
+                                                    aria-pressed={active}
+                                                    onClick={() => handleToggleHighlight(chip.id)}
+                                                    className={`px-2.5 py-1 rounded-full text-[11px] sm:text-xs font-semibold border transition-all cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-base/40 ${active
+                                                            ? "bg-primary-base text-white border-primary-base shadow-xs"
+                                                            : "bg-white text-grey-5 border-gray-200 hover:border-primary-base/50 hover:text-dark-1 hover:bg-primary-light/50"
+                                                        }`}
+                                                >
+                                                    {chip.label}
+                                                </button>
+                                            );
+                                        })}
+                                    </div>
+                                </div>
+
                                 {/* Editable shout-out note */}
-                                <div className="mt-4 sm:mt-5 space-y-1.5 sm:space-y-2">
-                                    <div className="flex items-center justify-between">
+                                <div className="mt-3.5 sm:mt-4 space-y-1.5 sm:space-y-2">
+                                    <div className="flex items-center justify-between gap-2">
                                         <label htmlFor={noteId} className="text-[10px] sm:text-xs font-bold uppercase tracking-wider sm:tracking-widest text-grey-2">
                                             Your shout-out <span className="normal-case tracking-normal font-medium">(optional)</span>
                                         </label>
-                                        <button
-                                            type="button"
-                                            onClick={handleCopyNote}
-                                            disabled={!note.trim()}
-                                            className="inline-flex items-center gap-1 rounded-md px-1.5 sm:px-2 py-0.5 sm:py-1 text-[11px] sm:text-xs font-bold text-primary-base hover:bg-primary-light disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-base/40"
-                                        >
-                                            {noteCopied ? <Check size={12} /> : <Copy size={12} />}
-                                            {noteCopied ? "Copied" : "Copy"}
-                                        </button>
+                                        <div className="flex items-center gap-1">
+                                            <button
+                                                type="button"
+                                                onClick={handleShuffleNote}
+                                                className="inline-flex items-center gap-1 rounded-md px-1.5 sm:px-2 py-0.5 sm:py-1 text-[11px] sm:text-xs font-bold text-grey-5 hover:text-primary-base hover:bg-primary-light cursor-pointer transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-base/40"
+                                            >
+                                                <RefreshCw size={12} />
+                                                New Suggestion
+                                            </button>
+                                            <button
+                                                type="button"
+                                                onClick={handleCopyNote}
+                                                disabled={!note.trim()}
+                                                className="inline-flex items-center gap-1 rounded-md px-1.5 sm:px-2 py-0.5 sm:py-1 text-[11px] sm:text-xs font-bold text-primary-base hover:bg-primary-light disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-base/40"
+                                            >
+                                                {noteCopied ? <Check size={12} /> : <Copy size={12} />}
+                                                {noteCopied ? "Copied" : "Copy"}
+                                            </button>
+                                        </div>
                                     </div>
                                     <textarea
                                         id={noteId}
                                         value={note}
                                         onChange={(event) => setNote(event.target.value.slice(0, NOTE_MAX_LENGTH))}
                                         maxLength={NOTE_MAX_LENGTH}
-                                        rows={2}
+                                        rows={3}
                                         className="w-full resize-none rounded-xl border border-gray-200 bg-white p-2.5 sm:p-3.5 text-xs sm:text-sm text-gray-700 placeholder-gray-400 shadow-xs transition-all duration-300 focus:border-primary-base focus:outline-none focus:ring-2 focus:ring-primary-base/20"
                                     />
                                     <p className="text-[10px] sm:text-[11px] font-medium text-grey-2">

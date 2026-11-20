@@ -211,6 +211,7 @@ export const PublicReview = () => {
                         platform={primaryPlatformMeta}
                         employeeName={flexologistName}
                         locationName={employee.location}
+                        seed={token}
                         message={primaryLink.message}
                         hasOpenedLink={hasOpenedLink}
                         onOpenReview={(noteText) => openReview(noteText)}
